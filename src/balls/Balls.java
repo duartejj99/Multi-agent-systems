@@ -47,7 +47,7 @@ public class Balls {
     public String toString() {
         String balls = "Positions  are: \n";
         for (Point ball : this.balls) {
-            balls += "(" + ball.y + "," + ball.x + ")\n";
+            balls += "( x = " + ball.y + ", y = " + ball.x + ")\n";
         }
 
         return balls;
