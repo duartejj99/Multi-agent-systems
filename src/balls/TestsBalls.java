@@ -1,9 +1,12 @@
 package balls;
 
+import java.awt.Point;
+
 public class TestsBalls {
     public static void main(String[] args) {
 
-        Balls myBalls = new Balls();
+        Point windowMargins = new Point(100, 100);
+        Balls myBalls = new Balls(windowMargins);
 
         System.out.println("TEST BALLS: \n");
         System.out.println("###########: \n\n");
