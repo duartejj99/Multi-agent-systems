@@ -1,72 +1,71 @@
 package balls;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.awt.Point;
 
 public class Balls {
 
     private static final int ballsNumber = 5;
-    private final int randomPosRange;
-    private List<Point> balls;
 
-    public List<Point> getBalls() {
-        return balls;
-    }
+    private List<Ball> balls;
+    private List<Ball> initialPositions;
 
-    private List<Point> initialPositions;
 
     public Balls(Point windowMargins) {
-        this.randomPosRange = windowMargins.x;
+        this.balls = new ArrayList<Ball>(ballsNumber);
+        this.initialPositions = new ArrayList<Ball>(ballsNumber);
 
-        this.balls = new ArrayList<Point>(ballsNumber);
-        this.initialPositions = new ArrayList<Point>(ballsNumber);
-
-        Random r = new Random();
         for (int i = 0; i < ballsNumber; i++) {
-            int x = r.nextInt(randomPosRange);
-            int y = r.nextInt(randomPosRange);
-            Point point = new Point(x, y);
-            Point initialPoint = new Point(point);
 
-            this.balls.add(point);
-            this.initialPositions.add(initialPoint);
+            Ball ball = new Ball(new Territory((int) windowMargins.getX(), (int) windowMargins.getY()));
+            Ball initialball = new Ball(new Territory((int) windowMargins.getX(), (int) windowMargins.getY()));
+
+            this.balls.add(ball);
+            this.initialPositions.add(initialball);
         }
 
     }
 
+    public List<Ball> getBalls() {
+        return balls;
+    }
+
+
+    public void move() {
+        for (Ball ball : this.balls) {
+            ball.move();
+        }
+    }
 
     public void translate(int dx, int dy) {
-        for  (Point ball : this.balls) {
+        for (Ball ball : this.balls) {
             ball.translate(dx, dy);
         } 
     }
 
     public void setPosition(int x, int y) {
-        for  (Point ball : this.balls) {
-            ball.setLocation(x, y);
+        for (Ball ball : this.balls) {
+            ball.setPosition(x, y);
         } 
     }
 
     public void reInit() {
         this.balls.clear();
         // Deep Copy, How to do better?
-        for (Point p : this.initialPositions) {
-            this.balls.add(new Point(p));
+        for (Ball p : this.initialPositions) {
+            this.balls.add(new Ball(p));
         }
     }
 
     @Override
     public String toString() {
         String balls = "Balls!: \n";
-        for (Point ball : this.balls) {
-            balls += "( x = " + ball.y + ", y = " + ball.x + ")\n";
+        for (Ball ball : this.balls) {
+            balls += ball.toString() + "\n";
         }
 
         return balls;
-
     }
 
 }

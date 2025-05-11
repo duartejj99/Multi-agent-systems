@@ -43,8 +43,8 @@ public class BallsSimulator implements Simulable {
 
     public void draw() {
         this.gui.reset();
-        for (Point ball : this.balls.getBalls()) {
-            this.gui.addGraphicalElement(new Oval(ball.x, ball.y, Color.RED, Color.RED, 10));
+        for (Ball ball : this.balls.getBalls()) {
+            this.gui.addGraphicalElement(new Oval(ball.getX(), ball.getY(), Color.RED, Color.RED, 10));
         }
     }
 
