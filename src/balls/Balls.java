@@ -15,11 +15,10 @@ public class Balls {
     public Balls(Point windowMargins) {
         this.balls = new ArrayList<Ball>(ballsNumber);
         this.initialPositions = new ArrayList<Ball>(ballsNumber);
-
         for (int i = 0; i < ballsNumber; i++) {
 
             Ball ball = new Ball(new Territory((int) windowMargins.getX(), (int) windowMargins.getY()));
-            Ball initialball = new Ball(new Territory((int) windowMargins.getX(), (int) windowMargins.getY()));
+            Ball initialball = new Ball(ball);
 
             this.balls.add(ball);
             this.initialPositions.add(initialball);

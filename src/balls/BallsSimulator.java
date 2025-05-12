@@ -5,6 +5,7 @@ import java.awt.Point;
 
 import gui.GUISimulator;
 import gui.Oval;
+import gui.Rectangle;
 import gui.Simulable;
 
 public class BallsSimulator implements Simulable {
@@ -16,10 +17,11 @@ public class BallsSimulator implements Simulable {
         Point windowSize = new Point(500, 500);
         this.balls = new Balls(windowSize);
         this.gui = new GUISimulator(windowSize.x, windowSize.y, Color.BLACK, this);
+        this.gui.setSimulable(this);
     }
 
     public BallsSimulator(GUISimulator gui) {
-        Point windowSize = new Point(gui.getWidth(), gui.getHeight());
+        Point windowSize = new Point(gui.getPanelWidth(), gui.getPanelHeight());
         this.balls = new Balls(windowSize);
         this.gui = gui;
     }
@@ -38,11 +40,15 @@ public class BallsSimulator implements Simulable {
     }
 
     private void move() {
-        this.balls.translate(10, 10);
+        this.balls.move();
     }
 
     public void draw() {
         this.gui.reset();
+        this.gui.addGraphicalElement(
+                new Rectangle(gui.getPanelWidth() / 2, gui.getPanelHeight() / 2, Color.WHITE, Color.BLACK,
+                        gui.getPanelWidth()));
+
         for (Ball ball : this.balls.getBalls()) {
             this.gui.addGraphicalElement(new Oval(ball.getX(), ball.getY(), Color.RED, Color.RED, 10));
         }
