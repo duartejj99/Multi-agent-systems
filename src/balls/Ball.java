@@ -7,7 +7,7 @@ import java.util.Random;
 public class Ball {
 
     private static final Random randomizer = new Random();
-    private static final int SPEED_PARAMETER = 10;
+    private static final int SPEED_PARAMETER = 20;
     private Point position; // mostly there is a Vector refactorization
     private Point speed; // mostly there is a Vector refactorization
     private Territory visibleSpace;
@@ -15,7 +15,7 @@ public class Ball {
     public Ball(Territory space) {
         this.visibleSpace = space;
         this.position = new Point(randomizer.nextInt(space.getWidth()), randomizer.nextInt(space.getHeight()));
-        this.speed = new Point(SPEED_PARAMETER, SPEED_PARAMETER);
+        this.speed = new Point(randomizer.nextInt(SPEED_PARAMETER), randomizer.nextInt(SPEED_PARAMETER));
     }
 
     public Ball(Ball ball) {
@@ -45,40 +45,26 @@ public class Ball {
         int newX = this.position.x + this.speed.x;
         int newY = this.position.y + this.speed.y;
 
-        Optional<Border> reachedBorder = visibleSpace.getReachedBorder(newX, newY);
+        Optional<HorizontalBorder> horizontalBorder = visibleSpace.getHorizontalBorder(newX);
+        Optional<VerticalBorder> verticalBorder = visibleSpace.getVerticalBorder(newY);
 
-        if (reachedBorder.isPresent()) {
-            changeDirection(reachedBorder.get());
-        } else {
-            this.position.x = newX;
-            this.position.y = newY;
+        if (verticalBorder.isPresent()) {
+            newY = bounceOnY(verticalBorder.get());
         }
+
+        if (horizontalBorder.isPresent()) {
+            newX = bounceOnX(horizontalBorder.get());
+        }
+
+        this.position.x = newX;
+        this.position.y = newY;
 
     }
 
-    private void changeDirection(Border borderReached) {
+    private int bounceOnX(HorizontalBorder horizontalBorder) {
         int virtualX = this.position.x + this.speed.x;
-        int virtualY = this.position.y + this.speed.y;
 
-        switch (borderReached) {
-            case BOTTOM:
-                this.speed.y = -1 * this.speed.y;
-                this.position.y = virtualY - 2 * (virtualY - visibleSpace.getHeight());
-                break;
-            case BOTTOM_LEFT:
-                this.speed.y = -1 * this.speed.y;
-                this.position.y = virtualY - 2 * (virtualY - visibleSpace.getHeight());
-
-                this.speed.x *= -1;
-                this.position.x = -virtualX;
-                break;
-            case BOTTOM_RIGHT:
-                this.speed.y = -1 * this.speed.y;
-                this.position.y = virtualY - 2 * (virtualY - visibleSpace.getHeight());
-
-                this.speed.x *= -1;
-                this.position.x = virtualX - 2 * (virtualX - this.visibleSpace.getWidth());
-                break;
+        switch (horizontalBorder) {
             case LEFT:
                 this.speed.x *= -1;
                 this.position.x = -virtualX;
@@ -87,25 +73,31 @@ public class Ball {
                 this.speed.x *= -1;
                 this.position.x = virtualX - 2 * (virtualX - this.visibleSpace.getWidth());
                 break;
+            default:
+                System.out.println("WTF");
+                break;
+        }
+        return this.position.x;
+    }
+
+    private int bounceOnY(VerticalBorder verticalBorder) {
+        int virtualY = this.position.y + this.speed.y;
+
+        switch (verticalBorder) {
             case TOP:
                 this.speed.y *= -1;
                 this.position.y = -virtualY;
                 break;
-            case TOP_LEFT:
-                this.speed.y *= -1;
-                this.position.y = -virtualY;
-
-                this.speed.x *= -1;
-                this.position.x = -virtualX;
+            case BOTTOM:
+                this.speed.y = -1 * this.speed.y;
+                this.position.y = virtualY - 2 * (virtualY - visibleSpace.getHeight());
                 break;
-            case TOP_RIGHT:
-                this.speed.y *= -1;
-                this.position.y = -virtualY;
-
-                this.speed.x *= -1;
-                this.position.x = virtualX - 2 * (virtualX - this.visibleSpace.getWidth());
+            default:
+                System.out.println("WTF");
                 break;
         }
+
+        return this.position.y;
     }
 
     public void translate(int dx, int dy) {

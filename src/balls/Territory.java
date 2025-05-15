@@ -19,43 +19,41 @@ public class Territory {
         return this.height;
     }
 
-    public Optional<Border> getReachedBorder(int x, int y) {
 
-        boolean bottomReached = y > this.height;
-        boolean topReached = y < 0;
+    public Optional<HorizontalBorder> getHorizontalBorder(int x) {
+
         boolean leftReached = x < 0;
         boolean rightReached = x > this.width;
 
-        if (topReached) {
-            if (leftReached) {
-                return Optional.of(Border.TOP_LEFT);
-            }
-
-            if (rightReached) {
-                return Optional.of(Border.TOP_RIGHT);
-            }
-
-            return Optional.of(Border.TOP);
-        }
-
-        if (bottomReached) {
-            if (leftReached) {
-                return Optional.of(Border.BOTTOM_LEFT);
-            }
-
-            if (rightReached) {
-                return Optional.of(Border.BOTTOM_RIGHT);
-            }
-
-            return Optional.of(Border.BOTTOM);
+        if (!leftReached && !rightReached) {
+            return Optional.empty();
         }
 
         if (leftReached) {
-            return Optional.of(Border.LEFT);
+            return Optional.of(HorizontalBorder.LEFT);
         }
 
         if (rightReached) {
-            return Optional.of(Border.RIGHT);
+            return Optional.of(HorizontalBorder.RIGHT);
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<VerticalBorder> getVerticalBorder(int y) {
+        boolean bottomReached = y > this.height;
+        boolean topReached = y < 0;
+
+        if (!bottomReached && !topReached) {
+            return Optional.empty();
+        }
+
+        if (bottomReached) {
+            return Optional.of(VerticalBorder.BOTTOM);
+        }
+
+        if (topReached) {
+            return Optional.of(VerticalBorder.TOP);
         }
 
         return Optional.empty();
