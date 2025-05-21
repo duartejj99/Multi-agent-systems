@@ -1,6 +1,8 @@
 package gameoflife;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import gui.GUISimulator;
 import gui.Rectangle;
@@ -38,7 +40,7 @@ public class GameOfLife {
     }
 
     public Cell cellNextState(Cell cell) {
-        Cell[] neighbors = this.getCellNeighbors(cell);
+        List<Cell> neighbors = this.getCellNeighbors(cell);
         int aliveNeighbors = 0;
 
         for (Cell n : neighbors) {
@@ -63,13 +65,53 @@ public class GameOfLife {
 
     }
 
-    public Cell[] getCellNeighbors(Cell cell){
+    public List<Cell> getCellNeighbors(Cell cell) {
+        int[] rows = new int[3];
+        int[] columns = new int[3];
+
+        rows[0] = cell.getX() - 1;
+        rows[1] = cell.getX();
+        rows[2] = cell.getX() + 1;
+
+        columns[0] = cell.getY() - 1;
+        columns[1] = cell.getY();
+        columns[2] = cell.getY() + 1;
+
         if (cell.getX() == this.grid.length - 1) {
-
+            rows[2] = 0;
         }
-        // Cell[] neighbors = new Cell[8];
-        throw new UnsupportedOperationException("Unimplemented method 'next'");
 
+        if (cell.getX() == 0) {
+            rows[0] = this.grid.length - 1;
+        }
+
+        if (cell.getY() == this.grid.length - 1) {
+            columns[2] = 0;
+        }
+
+        if (cell.getY() == 0) {
+            columns[0] = this.grid.length - 1;
+        }
+
+        List<Cell> neighbors = new ArrayList<Cell>(8);
+
+        for (int x : rows) {
+            for (int y : columns) {
+                if (cell.getX() == x && cell.getY() == y) {
+                    continue;
+                }
+
+                Cell neighbor = this.getCell(x, y);
+                neighbors.add(neighbor);
+
+            }
+        }
+
+        return neighbors;
+    }
+
+    public Cell getCell(int x, int y) {
+        return this.oldGrid[x][y];
     }
 
     public void draw(GUISimulator gui) {
