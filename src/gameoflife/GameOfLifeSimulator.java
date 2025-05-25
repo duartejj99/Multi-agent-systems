@@ -7,10 +7,14 @@ public class GameOfLifeSimulator implements Simulable {
     private GameOfLife gameOfLife;
     private GameOfLife initialState;
 
-    public GameOfLifeSimulator(GUISimulator gui) {
+    public GameOfLifeSimulator(GUISimulator gui, GameOfLife game) {
         this.gui = gui;
-        this.gameOfLife = new GameOfLife(5);
+        this.gameOfLife = game;
         gui.setSimulable(this);
+    }
+
+    public GameOfLifeSimulator(GUISimulator gui) {
+        this(gui, new GameOfLife(5));
     }
 
     @Override

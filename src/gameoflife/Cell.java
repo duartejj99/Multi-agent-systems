@@ -14,14 +14,14 @@ public class Cell implements Cloneable {
         return y;
     }
 
-    public Cell(int x, int y) {
-        this(CellState.DEAD);
+    public Cell(int x, int y, CellState state) {
         this.x = x;
         this.y = y;
+        this.state = state;
     }
 
-    public Cell(CellState state) {
-        this.state = state;
+    public Cell(int x, int y) {
+        this(x, y, CellState.DEAD);
     }
 
     public CellState getState() {
@@ -34,7 +34,7 @@ public class Cell implements Cloneable {
 
     @Override
     public Cell clone() {
-        return new Cell(this.state);
+        return new Cell(this.x, this.y, this.state);
     }
 
 }

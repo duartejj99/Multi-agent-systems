@@ -16,6 +16,7 @@ public class GameOfLife {
 
     public GameOfLife(int size) {
         this.newGrid = new Cell[5][5];
+        this.grid = new Cell[5][5];
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
                 newGrid[row][column] = new Cell(row, column);
@@ -24,6 +25,20 @@ public class GameOfLife {
         }
     }
 
+
+    public GameOfLife(boolean[][] initialState) {
+        int nbOfRows = initialState.length;
+        int nbOfColumns = initialState[0].length;
+        this.newGrid = new Cell[nbOfRows][nbOfColumns];
+        this.grid = new Cell[nbOfRows][nbOfColumns];
+
+        for (int row = 0; row < nbOfRows; row++) {
+            for (int column = 0; column < nbOfColumns; column++) {
+                newGrid[row][column] = new Cell(row, column, CellState.from(initialState[row][column]));
+                grid[row][column] = new Cell(row, column, CellState.from(initialState[row][column]));
+            }
+        }
+    }
 
     public GameOfLife(GameOfLife initialState) {
         this.newGrid = initialState.newGrid.clone();
@@ -54,11 +69,11 @@ public class GameOfLife {
             if (aliveNeighbors == 2 || aliveNeighbors == 3) {
                 return cell.clone();
             } else {
-                return new Cell(CellState.DEAD);
+                return new Cell(cell.getX(), cell.getY(), CellState.DEAD);
             }
         } else {
             if (aliveNeighbors == 3) {
-                return new Cell(CellState.ALIVE);
+                return new Cell(cell.getX(), cell.getY(), CellState.ALIVE);
             } else {
                 return cell.clone();
             }
@@ -121,10 +136,19 @@ public class GameOfLife {
                 marcoSize);
         gui.addGraphicalElement(marco);
 
+        Rectangle r;
         for (int row = 0; row < newGrid.length; row++) {
             for (int column = 0; column < newGrid[row].length; column++) {
-                Rectangle r = new Rectangle(row * CELL_SIZE + CELL_OFFSET, column * CELL_SIZE + CELL_OFFSET, Color.BLUE,
-                        Color.WHITE, CELL_SIZE);
+                if (this.grid[row][column].getState() == CellState.DEAD) {
+                    r = new Rectangle(row * CELL_SIZE + CELL_OFFSET, column * CELL_SIZE + CELL_OFFSET,
+                            Color.BLUE,
+                            Color.WHITE, CELL_SIZE);
+                } else {
+                    r = new Rectangle(row * CELL_SIZE + CELL_OFFSET, column * CELL_SIZE + CELL_OFFSET,
+                            Color.BLUE,
+                            Color.BLUE, CELL_SIZE);
+                }
+
                 gui.addGraphicalElement(r);
             }
         }
