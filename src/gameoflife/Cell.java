@@ -37,4 +37,12 @@ public class Cell implements Cloneable {
         return new Cell(this.x, this.y, this.state);
     }
 
+    @Override
+    public String toString() {
+        if (state == CellState.ALIVE) {
+            return "[x]";
+        } else {
+            return "[ ]";
+        }
+    }
 }

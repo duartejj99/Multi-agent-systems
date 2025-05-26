@@ -10,6 +10,7 @@ public class GameOfLifeSimulator implements Simulable {
     public GameOfLifeSimulator(GUISimulator gui, GameOfLife game) {
         this.gui = gui;
         this.gameOfLife = game;
+        this.initialState = new GameOfLife(game);
         gui.setSimulable(this);
     }
 
@@ -20,6 +21,7 @@ public class GameOfLifeSimulator implements Simulable {
     @Override
     public void next() {
         this.gameOfLife.nextState();
+        System.out.println(this.gameOfLife.toString());
         this.draw();
     }
 
@@ -33,6 +35,7 @@ public class GameOfLifeSimulator implements Simulable {
     public void restart() {
         this.gui.reset();
         this.gameOfLife = new GameOfLife(initialState);
+        System.out.println(this.gameOfLife.toString());
         this.gameOfLife.draw(gui);
     }
 

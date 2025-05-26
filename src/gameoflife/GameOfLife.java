@@ -153,6 +153,18 @@ public class GameOfLife {
             }
         }
     }
-     
+
+    @Override
+    public String toString() {
+        String game = new String();
+        for (Cell[] row : grid) {
+            for (Cell cell : row) {
+                game += cell.toString();
+            }
+            game += "\n";
+        }
+
+        return game;
+    }
 
 }

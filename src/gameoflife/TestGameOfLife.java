@@ -7,10 +7,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestGameOfLife {
-    // public static void main(String[] args) {
-
-    // }
-
     @Test
     public void testNeighborhood() {
         GameOfLife game = new GameOfLife(5);
