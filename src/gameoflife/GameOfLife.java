@@ -131,6 +131,7 @@ public class GameOfLife {
     }
 
     public void draw(GUISimulator gui) {
+        gui.reset();
         int marcoSize = newGrid.length * CELL_SIZE;
         Rectangle marco = new Rectangle(marcoSize / 2, marcoSize / 2, Color.WHITE, Color.BLACK,
                 marcoSize);
@@ -140,12 +141,12 @@ public class GameOfLife {
         for (int row = 0; row < newGrid.length; row++) {
             for (int column = 0; column < newGrid[row].length; column++) {
                 if (this.grid[row][column].getState() == CellState.DEAD) {
-                    r = new Rectangle(row * CELL_SIZE + CELL_OFFSET, column * CELL_SIZE + CELL_OFFSET,
-                            Color.BLUE,
+                    r = new Rectangle(column * CELL_SIZE + CELL_OFFSET, row * CELL_SIZE + CELL_OFFSET,
+                                    Color.BLUE,
                             Color.WHITE, CELL_SIZE);
                 } else {
-                    r = new Rectangle(row * CELL_SIZE + CELL_OFFSET, column * CELL_SIZE + CELL_OFFSET,
-                            Color.BLUE,
+                    r = new Rectangle(column * CELL_SIZE + CELL_OFFSET, row * CELL_SIZE + CELL_OFFSET,
+                                    Color.BLUE,
                             Color.BLUE, CELL_SIZE);
                 }
 
