@@ -67,7 +67,7 @@ public class GameOfLife {
 
         if (cell.isAlive()) {
             if (aliveNeighbors == 2 || aliveNeighbors == 3) {
-                return cell.clone();
+                return new Cell(cell.getX(), cell.getY(), CellState.ALIVE);
             } else {
                 return new Cell(cell.getX(), cell.getY(), CellState.DEAD);
             }
@@ -75,7 +75,8 @@ public class GameOfLife {
             if (aliveNeighbors == 3) {
                 return new Cell(cell.getX(), cell.getY(), CellState.ALIVE);
             } else {
-                return cell.clone();
+                return new Cell(cell.getX(), cell.getY(), CellState.DEAD);
+
             }
         }
 
@@ -166,6 +167,37 @@ public class GameOfLife {
         }
 
         return game;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+
+        if ((other == this)) {
+            return true;
+        }
+
+        if (!(other instanceof GameOfLife)) {
+            return false;
+        }
+
+        GameOfLife otherGame = (GameOfLife) other;
+
+        if (this.grid.length != otherGame.grid.length || this.grid[0].length != otherGame.grid[0].length) {
+            return false;
+        }
+
+        for (int row = 0; row < this.grid.length; row++) {
+            for (int col = 0; col < this.grid[0].length; col++) {
+                Cell gameCell = this.grid[row][col];
+                Cell otherGameCell = otherGame.grid[row][col];
+                if (!gameCell.equals(otherGameCell)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+
     }
 
 }

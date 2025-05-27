@@ -45,4 +45,17 @@ public class Cell implements Cloneable {
             return "[ ]";
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Cell)) {
+            return false;
+        }
+        Cell otherCell = (Cell) o;
+        return this.state == otherCell.state && this.getX() == otherCell.getX() && this.getY() == otherCell.getY();
+    }
 }
