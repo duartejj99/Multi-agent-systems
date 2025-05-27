@@ -53,6 +53,11 @@ public class GameOfLife {
             }
         }
 
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                this.grid[i][j] = this.newGrid[i][j].clone();
+            }
+        }
     }
 
     public Cell cellNextState(Cell cell) {
