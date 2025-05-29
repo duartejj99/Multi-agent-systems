@@ -3,34 +3,56 @@ package gameoflife;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import gui.GUISimulator;
 import gui.Rectangle;
 
 public class GameOfLife {
 
-    private static final int CELL_SIZE = 50;
+    private static final int CELL_SIZE = 20;
     private static final int CELL_OFFSET = CELL_SIZE / 2;
+    private final int size;
+
+    public int getSize() {
+        return size;
+    }
+
     private Cell[][] newGrid;
     private Cell[][] grid;
 
+    // Randomly generated
+
+    // User sized game
     public GameOfLife(int size) {
-        this.newGrid = new Cell[5][5];
-        this.grid = new Cell[5][5];
+
+        Random randomizer = new Random();
+
+        this.newGrid = new Cell[size][size];
+        this.grid = new Cell[size][size];
+        this.size = size;
+
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
-                newGrid[row][column] = new Cell(row, column);
-                grid[row][column] = new Cell(row, column);
+
+                CellState state = CellState.from(randomizer.nextBoolean());
+                newGrid[row][column] = new Cell(row, column, state);
+                grid[row][column] = new Cell(row, column, state);
             }
         }
     }
 
+    public GameOfLife() {
+        this(50);
+    }
 
+    // For testing purposes
     public GameOfLife(boolean[][] initialState) {
         int nbOfRows = initialState.length;
         int nbOfColumns = initialState[0].length;
         this.newGrid = new Cell[nbOfRows][nbOfColumns];
         this.grid = new Cell[nbOfRows][nbOfColumns];
+        this.size = nbOfRows;
 
         for (int row = 0; row < nbOfRows; row++) {
             for (int column = 0; column < nbOfColumns; column++) {
@@ -40,11 +62,13 @@ public class GameOfLife {
         }
     }
 
+    // For testing purposes
     public GameOfLife(int[][] initialState) {
         int nbOfRows = initialState.length;
         int nbOfColumns = initialState[0].length;
         this.newGrid = new Cell[nbOfRows][nbOfColumns];
         this.grid = new Cell[nbOfRows][nbOfColumns];
+        this.size = nbOfRows;
 
         for (int row = 0; row < nbOfRows; row++) {
             for (int column = 0; column < nbOfColumns; column++) {
@@ -58,9 +82,11 @@ public class GameOfLife {
         }
     }
 
+    // BUGGY, doesn't work, it is a shallow copy, not deep
     public GameOfLife(GameOfLife initialState) {
         this.newGrid = initialState.newGrid.clone();
         this.grid = initialState.grid.clone();
+        this.size = initialState.size;
     }
 
     public void nextState() {
