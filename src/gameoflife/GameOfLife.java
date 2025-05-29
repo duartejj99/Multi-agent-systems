@@ -40,6 +40,24 @@ public class GameOfLife {
         }
     }
 
+    public GameOfLife(int[][] initialState) {
+        int nbOfRows = initialState.length;
+        int nbOfColumns = initialState[0].length;
+        this.newGrid = new Cell[nbOfRows][nbOfColumns];
+        this.grid = new Cell[nbOfRows][nbOfColumns];
+
+        for (int row = 0; row < nbOfRows; row++) {
+            for (int column = 0; column < nbOfColumns; column++) {
+                try {
+                    newGrid[row][column] = new Cell(row, column, CellState.from(initialState[row][column]));
+                    grid[row][column] = new Cell(row, column, CellState.from(initialState[row][column]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public GameOfLife(GameOfLife initialState) {
         this.newGrid = initialState.newGrid.clone();
         this.grid = initialState.grid.clone();
@@ -53,9 +71,9 @@ public class GameOfLife {
             }
         }
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid.length; j++) {
-                this.grid[i][j] = this.newGrid[i][j].clone();
+        for (int row = 0; row < grid.length; row++) {
+            for (int col = 0; col < grid[row].length; col++) {
+                this.grid[row][col] = this.newGrid[row][col].clone();
             }
         }
     }
@@ -107,12 +125,12 @@ public class GameOfLife {
             rows[0] = this.newGrid.length - 1;
         }
 
-        if (cell.getY() == this.newGrid.length - 1) {
+        if (cell.getY() == this.newGrid[0].length - 1) {
             columns[2] = 0;
         }
 
         if (cell.getY() == 0) {
-            columns[0] = this.newGrid.length - 1;
+            columns[0] = this.newGrid[0].length - 1;
         }
 
         List<Cell> neighbors = new ArrayList<Cell>(8);
@@ -138,9 +156,10 @@ public class GameOfLife {
 
     public void draw(GUISimulator gui) {
         gui.reset();
-        int marcoSize = newGrid.length * CELL_SIZE;
-        Rectangle marco = new Rectangle(marcoSize / 2, marcoSize / 2, Color.WHITE, Color.BLACK,
-                marcoSize);
+        int marcoSizeX = newGrid.length * CELL_SIZE;
+        int marcoSizeY = newGrid[0].length * CELL_SIZE;
+        Rectangle marco = new Rectangle(marcoSizeX / 2, marcoSizeY / 2, Color.WHITE, Color.BLACK,
+                marcoSizeX * marcoSizeY);
         gui.addGraphicalElement(marco);
 
         Rectangle r;

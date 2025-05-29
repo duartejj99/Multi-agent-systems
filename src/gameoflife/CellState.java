@@ -10,4 +10,23 @@ public enum CellState {
             return DEAD;
         }
     }
+
+    public static CellState from(int state) throws Exception {
+        if (state == 1) {
+            return ALIVE;
+        } else if (state == 0) {
+            return DEAD;
+        }
+
+        switch (state) {
+            case 0:
+                return ALIVE;
+
+            case 1:
+                return DEAD;
+
+            default:
+                throw new Exception("WOOOOOOOOOOOOOOOOOOW");
+        }
+    }
 }
