@@ -1,22 +1,25 @@
 package gameoflife;
 
+import gui.GUISimulator;
+import gui.Rectangle;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import gui.GUISimulator;
-import gui.Rectangle;
 
 public class GameOfLife {
 
     private static final int CELL_SIZE = 20;
     private static final int CELL_OFFSET = CELL_SIZE / 2;
     private final int size;
+    private final int displayHeight;
+    private final int displayWidth;
 
     public int getSize() {
         return size;
     }
+    public int getDisplayHeight() {return  displayHeight;}
+    public int getDisplayWidth() {return  displayWidth;}
 
     private Cell[][] grid;
 
@@ -24,15 +27,15 @@ public class GameOfLife {
 
     // User sized game
     public GameOfLife(int size) {
-
         Random randomizer = new Random();
 
         this.grid = new Cell[size][size];
         this.size = size;
+        this.displayWidth = grid.length * CELL_SIZE;
+        this.displayHeight = grid[0].length * CELL_SIZE;
 
         for (int row = 0; row < size; row++) {
             for (int column = 0; column < size; column++) {
-
                 CellState state = CellState.from(randomizer.nextBoolean());
                 grid[row][column] = new Cell(row, column, state);
             }
@@ -49,10 +52,16 @@ public class GameOfLife {
         int nbOfColumns = initialState[0].length;
         this.grid = new Cell[nbOfRows][nbOfColumns];
         this.size = nbOfRows;
+        this.displayWidth = grid.length * CELL_SIZE;
+        this.displayHeight = grid[0].length * CELL_SIZE;
 
         for (int row = 0; row < nbOfRows; row++) {
             for (int column = 0; column < nbOfColumns; column++) {
-                grid[row][column] = new Cell(row, column, CellState.from(initialState[row][column]));
+                grid[row][column] = new Cell(
+                    row,
+                    column,
+                    CellState.from(initialState[row][column])
+                );
             }
         }
     }
@@ -63,11 +72,17 @@ public class GameOfLife {
         int nbOfColumns = initialState[0].length;
         this.grid = new Cell[nbOfRows][nbOfColumns];
         this.size = nbOfRows;
+        this.displayWidth = grid.length * CELL_SIZE;
+        this.displayHeight = grid[0].length * CELL_SIZE;
 
         for (int row = 0; row < nbOfRows; row++) {
             for (int column = 0; column < nbOfColumns; column++) {
                 try {
-                    grid[row][column] = new Cell(row, column, CellState.from(initialState[row][column]));
+                    grid[row][column] = new Cell(
+                        row,
+                        column,
+                        CellState.from(initialState[row][column])
+                    );
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -79,11 +94,13 @@ public class GameOfLife {
     public GameOfLife(GameOfLife initialState) {
         this.grid = initialState.grid.clone();
         this.size = initialState.size;
+        displayHeight = initialState.getDisplayHeight();
+        displayWidth = initialState.getDisplayWidth();
     }
 
-    // Game function
-    // TODO: BUG => if the cell is m x n,
-    // there will addresses pointing to null on the matrix
+    /// Calculates next state of the game of life.
+    /// The new state calculated on the "newGrid" based on the
+    /// actual state maintained on this.grid
     public void nextState() {
         Cell[][] newGrid = new Cell[grid.length][grid[0].length];
         for (int row = 0; row < grid.length; row++) {
@@ -118,10 +135,8 @@ public class GameOfLife {
                 return new Cell(cell.getX(), cell.getY(), CellState.ALIVE);
             } else {
                 return new Cell(cell.getX(), cell.getY(), CellState.DEAD);
-
             }
         }
-
     }
 
     // Future Grid function
@@ -163,15 +178,18 @@ public class GameOfLife {
 
                 Cell neighbor = this.getCell(x, y);
                 neighbors.add(neighbor);
-
             }
         }
 
         return neighbors;
     }
 
-    // Grid function
+    /// Gets the Cell of the given coordinates.
     public Cell getCell(int x, int y) {
+        if (x < 0 || y < 0 || x >= this.grid.length || y >= this.grid[0].length) {
+            throw new IndexOutOfBoundsException();
+        }
+
         return this.grid[x][y];
     }
 
@@ -179,21 +197,35 @@ public class GameOfLife {
         gui.reset();
         int marcoSizeX = grid.length * CELL_SIZE;
         int marcoSizeY = grid[0].length * CELL_SIZE;
-        Rectangle marco = new Rectangle(marcoSizeX / 2, marcoSizeY / 2, Color.WHITE, Color.BLACK,
-                marcoSizeX * marcoSizeY);
+        Rectangle marco = new Rectangle(
+            marcoSizeX / 2,
+            marcoSizeY / 2,
+            Color.GREEN,
+            Color.GREEN,
+            marcoSizeX + 1,
+            marcoSizeY + 1
+        );
         gui.addGraphicalElement(marco);
 
         Rectangle r;
         for (int row = 0; row < grid.length; row++) {
             for (int column = 0; column < grid[row].length; column++) {
                 if (this.grid[row][column].getState() == CellState.DEAD) {
-                    r = new Rectangle(column * CELL_SIZE + CELL_OFFSET, row * CELL_SIZE + CELL_OFFSET,
-                                    Color.BLUE,
-                            Color.WHITE, CELL_SIZE);
+                    r = new Rectangle(
+                        column * CELL_SIZE + CELL_OFFSET,
+                        row * CELL_SIZE + CELL_OFFSET,
+                        Color.BLUE,
+                        Color.WHITE,
+                        CELL_SIZE
+                    );
                 } else {
-                    r = new Rectangle(column * CELL_SIZE + CELL_OFFSET, row * CELL_SIZE + CELL_OFFSET,
-                                    Color.BLUE,
-                            Color.BLUE, CELL_SIZE);
+                    r = new Rectangle(
+                        column * CELL_SIZE + CELL_OFFSET,
+                        row * CELL_SIZE + CELL_OFFSET,
+                        Color.BLUE,
+                        Color.BLUE,
+                        CELL_SIZE
+                    );
                 }
 
                 gui.addGraphicalElement(r);
@@ -216,7 +248,6 @@ public class GameOfLife {
 
     @Override
     public boolean equals(Object other) {
-
         if ((other == this)) {
             return true;
         }
@@ -227,7 +258,10 @@ public class GameOfLife {
 
         GameOfLife otherGame = (GameOfLife) other;
 
-        if (this.grid.length != otherGame.grid.length || this.grid[0].length != otherGame.grid[0].length) {
+        if (
+            this.grid.length != otherGame.grid.length ||
+            this.grid[0].length != otherGame.grid[0].length
+        ) {
             return false;
         }
 
@@ -242,7 +276,5 @@ public class GameOfLife {
         }
 
         return true;
-
     }
-
 }

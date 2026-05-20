@@ -3,9 +3,9 @@ package gameoflife;
 import gui.GUISimulator;
 import gui.Simulable;
 public class GameOfLifeSimulator implements Simulable {
-    private GUISimulator gui;
+    private final GUISimulator gui;
     private GameOfLife gameOfLife;
-    private GameOfLife initialState;
+    private final GameOfLife initialState;
 
     public GameOfLifeSimulator(GUISimulator gui, GameOfLife game) {
         this.gui = gui;
@@ -21,13 +21,12 @@ public class GameOfLifeSimulator implements Simulable {
     @Override
     public void next() {
         this.gameOfLife.nextState();
-        System.out.println(this.gameOfLife.toString());
         this.draw();
     }
 
     public void draw() {
-        this.gui.reset(); // It will be better if the clear only make temporaly death the cells that are
-                          // alives and not the clearing of all cells
+        this.gui.reset(); // It will be better if the clear only make temporarily death the cells that are
+                          // alive and not the clearing of all cells
         this.gameOfLife.draw(gui);
     }
 
