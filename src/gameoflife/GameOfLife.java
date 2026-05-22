@@ -235,15 +235,15 @@ public class GameOfLife {
 
     @Override
     public String toString() {
-        String game = new String();
+        StringBuilder game = new StringBuilder();
         for (Cell[] row : grid) {
             for (Cell cell : row) {
-                game += cell.toString();
+                game.append(cell.toString());
             }
-            game += "\n";
+            game.append("\n");
         }
 
-        return game;
+        return game.toString();
     }
 
     @Override
@@ -252,11 +252,9 @@ public class GameOfLife {
             return true;
         }
 
-        if (!(other instanceof GameOfLife)) {
+        if (!(other instanceof GameOfLife otherGame)) {
             return false;
         }
-
-        GameOfLife otherGame = (GameOfLife) other;
 
         if (
             this.grid.length != otherGame.grid.length ||
