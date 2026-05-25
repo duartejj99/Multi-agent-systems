@@ -1,50 +1,42 @@
 package gameoflife;
 
 public class Cell implements Cloneable {
-    private CellState state;
-    private int x;
+    protected int x;
+    private Object state;
 
     public int getX() {
         return x;
     }
 
-    private int y;
+    protected int y;
 
     public int getY() {
         return y;
     }
 
-    public Cell(int x, int y, CellState state) {
+    public Cell(int x, int y, Object state) {
         this.x = x;
         this.y = y;
         this.state = state;
     }
 
+    public void setState(Object state) {
+        this.state = state;
+    }
+
+    public Object getState() { return this.state;}
+
     public Cell(int x, int y) {
-        this(x, y, CellState.DEAD);
+        this.x = x;
+        this.y = y;
     }
 
-    public CellState getState() {
-        return this.state;
-    }
-
-    public boolean isAlive() {
-        return this.state == CellState.ALIVE;
-    }
 
     @Override
     public Cell clone() {
         return new Cell(this.x, this.y, this.state);
-    }
+    };
 
-    @Override
-    public String toString() {
-        if (state == CellState.ALIVE) {
-            return "[x]";
-        } else {
-            return "[ ]";
-        }
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -52,10 +44,9 @@ public class Cell implements Cloneable {
             return true;
         }
 
-        if (!(o instanceof Cell)) {
+        if (!(o instanceof Cell otherCell)) {
             return false;
         }
-        Cell otherCell = (Cell) o;
-        return this.state == otherCell.state && this.getX() == otherCell.getX() && this.getY() == otherCell.getY();
+        return this.getX() == otherCell.getX() && this.getY() == otherCell.getY() &&  this.state == otherCell.state;
     }
 }

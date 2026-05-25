@@ -10,38 +10,38 @@ public class TestGameOfLife {
     public void testNeighborhood() {
         GameOfLife game = new GameOfLife(5);
 
-        Cell cellInTheMiddle = game.getCell(2, 2);
-        List<Cell> neighbors = game.getCellNeighbors(cellInTheMiddle);
+        Cell cellInTheMiddle = game.grid.getCell(2, 2);
+        List<Cell> neighbors = game.grid.getCellNeighbors(cellInTheMiddle);
         
 
-        Assert.assertTrue(neighbors.contains(game.getCell(1, 1)));
-        Assert.assertTrue(neighbors.contains(game.getCell(1, 2)));
-        Assert.assertTrue(neighbors.contains(game.getCell(1, 3)));
-        Assert.assertTrue(neighbors.contains(game.getCell(2, 1)));
-        Assert.assertTrue(neighbors.contains(game.getCell(2, 3)));
-        Assert.assertTrue(neighbors.contains(game.getCell(3, 1)));
-        Assert.assertTrue(neighbors.contains(game.getCell(3, 2)));
-        Assert.assertTrue(neighbors.contains(game.getCell(3, 3)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(1, 1)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(1, 2)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(1, 3)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(2, 1)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(2, 3)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(3, 1)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(3, 2)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(3, 3)));
         
-        Assert.assertFalse(neighbors.contains(game.getCell(2, 2)));
+        Assert.assertFalse(neighbors.contains(game.grid.getCell(2, 2)));
     }
 
     @Test
     public void testCellOnTheEdgeNeighborhood() {
         GameOfLife game = new GameOfLife(5);
 
-        Cell cellInTheMiddle = game.getCell(4, 2);
-        List<Cell> neighbors = game.getCellNeighbors(cellInTheMiddle);
+        Cell cellInTheMiddle = game.grid.getCell(4, 2);
+        List<Cell> neighbors = game.grid.getCellNeighbors(cellInTheMiddle);
         
 
-        Assert.assertTrue(neighbors.contains(game.getCell(3, 1)));
-        Assert.assertTrue(neighbors.contains(game.getCell(3, 2)));
-        Assert.assertTrue(neighbors.contains(game.getCell(3, 3)));
-        Assert.assertTrue(neighbors.contains(game.getCell(4, 1)));
-        Assert.assertTrue(neighbors.contains(game.getCell(4, 3)));
-        Assert.assertTrue(neighbors.contains(game.getCell(0, 1)));
-        Assert.assertTrue(neighbors.contains(game.getCell(0, 2)));
-        Assert.assertTrue(neighbors.contains(game.getCell(0, 3)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(3, 1)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(3, 2)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(3, 3)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(4, 1)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(4, 3)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(0, 1)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(0, 2)));
+        Assert.assertTrue(neighbors.contains(game.grid.getCell(0, 3)));
         
     }
 
@@ -68,6 +68,12 @@ public class TestGameOfLife {
 
         game.nextState();
 
-        Assert.assertEquals(game, gameNextState);
+        for (int row = 0; row < game.grid.getRowsCount(); row++) {
+            for (int col = 0; col < game.grid.getColumnsCount(); col++) {
+                Cell cell = game.grid.getCell(row, col);
+                Cell nextStateCell = gameNextState.grid.getCell(row, col);
+                Assert.assertEquals((GameOfLifeState)cell.getState(), (GameOfLifeState)nextStateCell.getState());
+            }
+        }
     }
 }
