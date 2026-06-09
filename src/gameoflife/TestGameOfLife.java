@@ -2,6 +2,7 @@ package gameoflife;
 
 import java.util.List;
 
+import game.Cell;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 

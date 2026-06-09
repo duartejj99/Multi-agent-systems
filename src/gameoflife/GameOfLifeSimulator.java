@@ -34,7 +34,6 @@ public class GameOfLifeSimulator implements Simulable {
     public void restart() {
         this.gui.reset();
         this.gameOfLife = new GameOfLife(initialState);
-        System.out.println(this.gameOfLife.toString());
         this.gameOfLife.draw(gui);
     }
 
