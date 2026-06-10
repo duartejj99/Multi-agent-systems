@@ -2,13 +2,10 @@ package gameoflife;
 
 import game.Cell;
 import game.Game;
-import game.LifeState;
-import gui.GUISimulator;
-import gui.Rectangle;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class GameOfLife extends Game<LifeState> {
     // Randomly generated
@@ -29,7 +26,7 @@ public class GameOfLife extends Game<LifeState> {
     }
 
     public GameOfLife() {
-        this(50);
+        super();
     }
 
     // For testing purposes
@@ -95,15 +92,7 @@ public class GameOfLife extends Game<LifeState> {
     @Override
     public void nextState() {
         GameOfLife newState = new GameOfLife(getRows(), getColumns());
-        for  (int row = 0; row < getRows(); row++) {
-            for (int column = 0; column < getColumns(); column++) {
-                Cell<LifeState> cell = this.grid.get(row).get(column);
-                newState.grid.get(row).set(column,  this.cellNextState(cell));
-            }
-        }
-
-        // TODO: I only need to update the grid, not the whole game.
-        this.grid = newState.grid;
+        this.nextState(newState);
     }
 
     @Override
@@ -116,7 +105,7 @@ public class GameOfLife extends Game<LifeState> {
     }
 
     // Game function
-    public Cell<LifeState> cellNextState(Cell<LifeState> cell) {
+    public LifeState cellNextState(Cell<LifeState> cell) {
         List<Cell<LifeState>> neighbors = this.getCellNeighbors(cell);
         int aliveNeighbors = 0;
 
@@ -128,15 +117,15 @@ public class GameOfLife extends Game<LifeState> {
 
         if (isAlive(cell)) {
             if (aliveNeighbors == 2 || aliveNeighbors == 3) {
-                return new Cell<>(cell.getX(), cell.getY(), new LifeState(true));
+                return new LifeState(true);
             } else {
-                return new Cell<>(cell.getX(), cell.getY(), new LifeState(false));
+                return new LifeState(false);
             }
         } else {
             if (aliveNeighbors == 3) {
-                return new Cell<>(cell.getX(), cell.getY(), new LifeState(true));
+                return new LifeState(true);
             } else {
-                return new Cell<>(cell.getX(), cell.getY(), new LifeState(false));
+                return new LifeState(false);
             }
         }
     }

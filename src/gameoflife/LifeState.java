@@ -1,4 +1,6 @@
-package game;
+package gameoflife;
+
+import game.CellState;
 
 import java.util.Random;
 

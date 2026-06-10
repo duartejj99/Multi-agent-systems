@@ -1,6 +1,5 @@
 package game;
 
-import gameoflife.GameOfLife;
 import gui.GUISimulator;
 import gui.Rectangle;
 
@@ -55,6 +54,9 @@ public abstract class Game<TState extends CellState>{
         }
     }
 
+    public Game() {
+        this(50);
+    }
     // User sized game
     public Game(int size) {
         this(size, size);
@@ -170,6 +172,25 @@ public abstract class Game<TState extends CellState>{
     public abstract TState newState();
 
     public abstract void nextState();
+
+    /// Calculates next state of the game.
+    /// The new state calculated on the "newGrid" based on the
+    /// actual state maintained on this.grid
+    public void nextState(Game<TState> newState) {
+        for  (int row = 0; row < getRows(); row++) {
+            for (int column = 0; column < getColumns(); column++) {
+                Cell<TState> cell = this.grid.get(row).get(column);
+                newState.grid.get(row).get(column).setState(this.cellNextState(cell));
+            }
+        }
+
+        // TODO: I only need to update the grid, not the whole game.
+        this.grid = newState.grid;
+    }
+
+    // This is to be used as a Immutable borrow (RUST)
+    public abstract TState cellNextState(Cell<TState> cell);
+
 
     public abstract Color getCellColor(int x, int y);
 }
