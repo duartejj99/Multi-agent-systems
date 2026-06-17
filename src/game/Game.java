@@ -34,22 +34,21 @@ public abstract class Game<TState extends CellState>{
     // [][] checks types at runtime as well, and at run time
     // generics disappear, so you don't know which type of array you are handling.
     // List only
-    protected ArrayList<ArrayList<Cell<TState>>> grid;
+    protected Grid<TState> grid;
 
     // User sized game
     public Game(int rows, int cols) {
         Random randomizer = new Random();
-        this.grid = new ArrayList<>(rows);
+        this.grid = new Grid<>(rows, cols);
         this.rows = rows;
         this.columns = cols;
         this.displayWidth = rows * CELL_SIZE;
         this.displayHeight = cols * CELL_SIZE;
 
         for (int row = 0; row < rows; row++) {
-            grid.add(new ArrayList<>(cols));
             for (int column = 0; column < cols; column++) {
                 Cell<TState> cell = new Cell<TState>(row, column, newState());
-                grid.get(row).add(cell);
+                grid.addCell(row, column, cell);
             }
         }
     }
@@ -67,17 +66,7 @@ public abstract class Game<TState extends CellState>{
 
         // This is a clone, a proper clone
         // If I don't clone, the restart mechanism won't work
-        int rows = initialState.grid.toArray().length;
-        int columns = initialState.grid.getFirst().toArray().length;
-
-        this.grid = new ArrayList<>(rows);
-        for (int row = 0; row < rows; row++) {
-            grid.add(new ArrayList<>(columns));
-            for (int column = 0; column < columns; column++) {
-                Cell<TState> cell = new Cell<TState>(row, column, initialState.getCell(row, column).getState());
-                grid.get(row).add(cell);
-            }
-        }
+        this.grid = new Grid<>(initialState.grid);
 
         this.rows = initialState.rows;
         this.columns = initialState.columns;
@@ -103,15 +92,15 @@ public abstract class Game<TState extends CellState>{
         }
 
         if (cell.getX() == 0) {
-            rows[0] = this.grid.toArray().length - 1;
+            rows[0] = this.grid.rows() - 1;
         }
 
-        if (cell.getY() == this.grid.getFirst().toArray().length - 1) {
+        if (cell.getY() == this.grid.columns() - 1) {
             columns[2] = 0;
         }
 
         if (cell.getY() == 0) {
-            columns[0] =  this.grid.getFirst().toArray().length - 1;
+            columns[0] =  this.grid.columns() - 1;
         }
 
         List<Cell<TState>> neighbors = new ArrayList<Cell<TState>>(8);
@@ -132,11 +121,7 @@ public abstract class Game<TState extends CellState>{
 
     /// Gets the Cell of the given coordinates.
     public Cell<TState> getCell(int x, int y) {
-        if (x < 0 || y < 0 || x >= this.grid.toArray().length || y >= this.grid.getFirst().toArray().length) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        return this.grid.get(x).get(y);
+        return this.grid.getCell(x,y);
     }
 
 
@@ -179,8 +164,8 @@ public abstract class Game<TState extends CellState>{
     public void nextState(Game<TState> newState) {
         for  (int row = 0; row < getRows(); row++) {
             for (int column = 0; column < getColumns(); column++) {
-                Cell<TState> cell = this.grid.get(row).get(column);
-                newState.grid.get(row).get(column).setState(this.cellNextState(cell));
+                Cell<TState> cell = this.grid.getCell(row, column);
+                newState.grid.setCellState(row, column, this.cellNextState(cell));
             }
         }
 

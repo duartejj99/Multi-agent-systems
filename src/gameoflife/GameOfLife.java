@@ -33,17 +33,9 @@ public class GameOfLife extends Game<LifeState> {
     public GameOfLife(boolean[][] initialState) {
         super(initialState.length, initialState[0].length);
 
-
         for (int row = 0; row < this.getRows(); row++) {
             for (int column = 0; column < this.getColumns(); column++) {
-                Cell<LifeState> cell = new Cell<>(
-                        row,
-                        column,
-                        new LifeState(initialState[row][column]));
-
-                // TODO; Enough, this is so tight with the ArrayList model with weird access
-                // I imagine something as grid.setCellState(row, col, state)
-                this.grid.get(row).set(column, cell);
+                this.grid.setCellState(row, column, new LifeState(initialState[row][column]));
             }
         }
     }
@@ -56,24 +48,12 @@ public class GameOfLife extends Game<LifeState> {
             for (int column = 0; column < getColumns(); column++) {
                 try {
                     int value = initialState[row][column];
-                    boolean isAlive;
-                    switch (value) {
-                        case 0:
-                        case 1:
-                            isAlive = value == 1;
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Game of Life: Cell invalid state value " + value);
-                    }
-
-                    Cell<LifeState> cell = new Cell<>(
-                            row,
-                            column,
-                            new LifeState(isAlive));
-
-                    // TODO; Enough, this is so tight with the ArrayList model with weird access
-                    // I imagine something as grid.setCellState(row, col, state)
-                    this.grid.get(row).set(column, cell);
+                    boolean isAlive = switch (value) {
+                        case 0, 1 -> value == 1;
+                        default ->
+                                throw new IllegalArgumentException("Game of Life: Cell invalid state value " + value);
+                    };
+                    this.grid.setCellState(row, column, new LifeState(isAlive));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -138,7 +118,7 @@ public class GameOfLife extends Game<LifeState> {
     @Override
     public String toString() {
         StringBuilder game = new StringBuilder();
-        for (ArrayList<Cell<LifeState>> row : grid) {
+        for (ArrayList<Cell<LifeState>> row : grid.cells()) {
             for (Cell<LifeState> cell : row) {
                 if (isAlive(cell)) {
                      game.append("[x]");
