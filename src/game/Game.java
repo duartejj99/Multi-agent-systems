@@ -35,11 +35,13 @@ public abstract class Game<TState extends CellState>{
     // generics disappear, so you don't know which type of array you are handling.
     // List only
     protected Grid<TState> grid;
+    private final Grid<TState> initialGrid;
 
     // User sized game
     public Game(int rows, int cols) {
         Random randomizer = new Random();
         this.grid = new Grid<>(rows, cols);
+        this.initialGrid = new Grid<>(rows, cols);
         this.rows = rows;
         this.columns = cols;
         this.displayWidth = rows * CELL_SIZE;
@@ -49,6 +51,7 @@ public abstract class Game<TState extends CellState>{
             for (int column = 0; column < cols; column++) {
                 Cell<TState> cell = new Cell<TState>(row, column, newState());
                 grid.addCell(row, column, cell);
+                initialGrid.addCell(row, column, cell.clone());
             }
         }
     }
@@ -61,17 +64,18 @@ public abstract class Game<TState extends CellState>{
         this(size, size);
     }
 
-    public Game(Game<TState> initialState) {
+    public Game(Game<TState> otherGame) {
         // how to clone this. // we need to do a deep copy.
 
         // This is a clone, a proper clone
         // If I don't clone, the restart mechanism won't work
-        this.grid = new Grid<>(initialState.grid);
+        this.grid = new Grid<>(otherGame.grid);
 
-        this.rows = initialState.rows;
-        this.columns = initialState.columns;
-        displayHeight = initialState.getDisplayHeight();
-        displayWidth = initialState.getDisplayWidth();
+        this.rows = otherGame.rows;
+        this.columns = otherGame.columns;
+        displayHeight = otherGame.getDisplayHeight();
+        displayWidth = otherGame.getDisplayWidth();
+        this.initialGrid = otherGame.initialGrid;
     }
 
     // Future Grid function
@@ -178,4 +182,8 @@ public abstract class Game<TState extends CellState>{
 
 
     public abstract Color getCellColor(int x, int y);
+
+    public void restart() {
+        this.grid = new Grid<>(this.initialGrid);
+    }
 }

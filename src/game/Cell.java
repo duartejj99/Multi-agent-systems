@@ -30,8 +30,8 @@ public class Cell<TState extends CellState> implements Cloneable {
 
 
     @Override
-    public Cell clone() {
-        return new Cell(this.x, this.y, this.state);
+    public Cell<TState> clone() {
+        return new Cell<TState>(this.x, this.y, this.state);
     }
 
 

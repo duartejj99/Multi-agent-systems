@@ -21,14 +21,14 @@ public class Grid<TState extends CellState> {
         this(size, size);
     }
 
-    public Grid(Grid<TState> grid) {
-        this.rows = grid.rows;
-        this.cols = grid.cols;
+    public Grid(Grid<TState> otherGrid) {
+        this.rows = otherGrid.rows;
+        this.cols = otherGrid.cols;
         this.cells = new ArrayList<>(rows);
         for(int row = 0; row < rows; row++) {
             this.cells.add( new ArrayList<>(cols));
             for(int column = 0; column < cols; column++) {
-                Cell<TState> cell = new Cell<TState>(row, column, grid.getCellState(row, column));
+                Cell<TState> cell = new Cell<TState>(row, column, otherGrid.getCellState(row, column));
                 this.addCell(row, column, cell);
             }
         }
