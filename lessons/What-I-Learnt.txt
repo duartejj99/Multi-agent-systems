@@ -1,0 +1,16 @@
+# Immigration game
+
+Abstraction and refactorization.
+
+
+1. Don't make your class so tight bounded with the inner info representation.
+
+For example, if your class represents a Game with a certain API. And this game
+class uses a collection. Its API shouldn't be dependant to the collection API.
+
+2. Arrays and Generic types dont get too well.
+
+3. Try to do functional stuff first and then perfect stuff.
+
+4. Be creative, use what you know about C to do stuff. ;)
+
