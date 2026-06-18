@@ -1,7 +1,5 @@
 bin/
 out/
 setup/
-doc/
-doc_gui/
 settings.json
 target/
