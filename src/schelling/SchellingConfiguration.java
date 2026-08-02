@@ -12,8 +12,8 @@ public class SchellingConfiguration {
 
     public enum RoomValue {
         BLACK,
-        WHITE,
-        BROWN,
+        PINK,
+        ORANGE,
         YELLOW,
         RED,
         EMPTY

@@ -11,6 +11,10 @@ public class RoomState implements CellState {
         this.state = randomRoomValue();
     }
 
+    public RoomState(RoomValue roomValue) {
+        this.state = roomValue;
+    }
+
     protected static RoomValue randomRoomValue() {
         Random rand = new Random();
 
@@ -20,17 +24,19 @@ public class RoomState implements CellState {
             case 0 ->
                     RoomValue.BLACK;
             case 1 ->
-                    RoomValue.WHITE;
+                    RoomValue.PINK;
             case 2 ->
                     RoomValue.YELLOW;
             case 3 ->
                     RoomValue.RED;
             case 4 ->
-                    RoomValue.BROWN;
-            case 5, 6, 7, 8 , 9, 10 ->
-                    RoomValue.EMPTY;
+                    RoomValue.ORANGE;
             default->
-                    throw new IllegalStateException("Unexpected value: " + cellState);
+                    RoomValue.EMPTY;
         };
+    }
+
+    public RoomValue getRoomValue() {
+        return state;
     }
 }
