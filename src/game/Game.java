@@ -165,6 +165,9 @@ public abstract class Game<TState extends CellState>{
     /// Calculates next state of the game.
     /// The new state calculated on the "newGrid" based on the
     /// actual state maintained on this.grid
+    ///
+    /// Note: I had to put the newState parameter because I cannot
+    /// instantiate a generic class.
     public void nextState(Game<TState> newState) {
         for  (int row = 0; row < getRows(); row++) {
             for (int column = 0; column < getColumns(); column++) {
