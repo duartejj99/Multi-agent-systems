@@ -35,7 +35,7 @@ public abstract class Game<TState extends CellState>{
     // generics disappear, so you don't know which type of array you are handling.
     // List only
     protected Grid<TState> grid;
-    private final Grid<TState> initialGrid;
+    protected final Grid<TState> initialGrid;
 
     // User sized game
     public Game(int rows, int cols) {

@@ -8,11 +8,14 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.ArrayList;
 import java.util.List;
+
+import game.Grid;
 import schelling.SchellingConfiguration.RoomValue;
 
 public class SchellingModel extends Game<RoomState> {
 
-    Queue<Cell<RoomState>> emptyRooms = new ArrayDeque<>();
+    Queue<Cell<RoomState>> emptyRooms;
+    Queue<Cell<RoomState>> initialEmptyRooms;
 
     public SchellingModel(int rows, int columns) {
         super(rows, columns);
@@ -27,6 +30,7 @@ public class SchellingModel extends Game<RoomState> {
             }
         }
 
+        this.initialEmptyRooms = new ArrayDeque<>(emptyRooms);
     }
 
     public SchellingModel(SchellingModel model) {
@@ -38,15 +42,6 @@ public class SchellingModel extends Game<RoomState> {
         this(50, 50);
     }
 
-    // Options
-    // 1. Use initial fn that collect all empty spaces at the beginning.
-    //  -> One more iteration loop for that
-    // 2. Override constructors
-    // -> Only one constructor needs to be overrided (Game(int rows, int cols))
-    // 3. Modify base class constructor...
-    // -> I could create instead of a state, a whole cell on each
-    // CONCLUSION: 2, because 1 implies 2, and 3 is modifying a base class
-
     @Override
     public RoomState newState() {
         return new RoomState();
@@ -54,26 +49,23 @@ public class SchellingModel extends Game<RoomState> {
 
     @Override
     public void nextState() {
-        SchellingModel game = new SchellingModel(getRows(), getColumns());
+        SchellingModel game = new SchellingModel(this);
         this.nextState(game);
     }
 
     @Override
     public RoomState cellNextState(Cell<RoomState> cell) {
-
+        assert(!cell.getState().getRoomValue().equals(RoomValue.EMPTY));
         //  1-Check if I want to change of neighborhood and there is a free place
-
         long undesirableNeighborCount = this.getCellNeighbors(cell).stream().filter(neighbor -> {
             RoomValue neighborType = neighbor.getState().getRoomValue();
             RoomValue myType = cell.getState().getRoomValue();
 
-            return !neighborType.equals(myType);
+            return !neighborType.equals(RoomValue.EMPTY) &&  !neighborType.equals(myType);
         }).count();
 
         if (undesirableNeighborCount > SchellingConfiguration.threshold && !emptyRooms.isEmpty()) {
             // IF EMPTY SPACE TO MOVE -> Actual cell become empty
-            // TODO: Take one cell from the empty list.
-            Cell<RoomState> emptyRoom = emptyRooms.poll();
             return new RoomState(RoomValue.EMPTY);
         }
 
@@ -94,18 +86,19 @@ public class SchellingModel extends Game<RoomState> {
         }
         // Update them
         for (Cell<RoomState> busyCell : busyRooms) {
-            RoomState nextCellState = this.cellNextState(busyCell);
+            RoomState nextCellState = this.cellNextState(busyCell); // empty or the same
             if (nextCellState.getRoomValue().equals(RoomValue.EMPTY)) {
                 // Pick an empty room
                 Cell<RoomState> newFamilyHouse = this.emptyRooms.poll();
                 // Warning because poll is not verified to be not null,
                 //but If I have a RoomValue.Empty, that means I already did the
                 // verification on the cellNextState, this should be improved.
-                newFamilyHouse.setState(busyCell.getState());
-                newState.grid.setCellState(newFamilyHouse.getX(), newFamilyHouse.getY(), newFamilyHouse.getState());
-                this.emptyRooms.add(busyCell);
+                //newFamilyHouse.setState(busyCell.getState());
+                newState.grid.setCellState(newFamilyHouse.getX(), newFamilyHouse.getY(), busyCell.getState().clone());
+                busyCell.setState(nextCellState.clone());
+                this.emptyRooms.add(busyCell.clone());
             }
-            newState.grid.setCellState(busyCell.getX(), busyCell.getY(), nextCellState);
+            newState.grid.setCellState(busyCell.getX(), busyCell.getY(), nextCellState.clone());
         }
 
         // TODO: I only need to update the grid, not the whole game.
@@ -128,5 +121,12 @@ public class SchellingModel extends Game<RoomState> {
                 Color.PINK;
             default -> Color.GRAY;
         };
+    }
+
+    // TODO: For the game restart I need to save the emptyRooms on an initialState.
+    @Override
+    public void restart() {
+        this.grid = new Grid<>(this.initialGrid);
+        this.emptyRooms = new ArrayDeque<>(this.initialEmptyRooms);
     }
 }

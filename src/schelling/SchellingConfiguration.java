@@ -8,7 +8,7 @@ public class SchellingConfiguration {
     This represents the number of different colors neighbors at a given cell with color C
     needed to decide to change of neighborhood.
      */
-    public static final int threshold = 6;
+    public static final int threshold = 2;
 
     public enum RoomValue {
         BLACK,

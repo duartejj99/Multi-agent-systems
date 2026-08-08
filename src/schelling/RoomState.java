@@ -1,10 +1,11 @@
 package schelling;
 
+import game.Cell;
 import game.CellState;
 import java.util.Random;
 import schelling.SchellingConfiguration.RoomValue;
 
-public class RoomState implements CellState {
+public class RoomState implements CellState, Cloneable {
 
     private RoomValue state;
     public RoomState() {
@@ -15,10 +16,15 @@ public class RoomState implements CellState {
         this.state = roomValue;
     }
 
+    @Override
+    public RoomState clone() {
+        return new RoomState(this.state);
+    }
+
     protected static RoomValue randomRoomValue() {
         Random rand = new Random();
 
-        int cellState = rand.nextInt(SchellingConfiguration.ROOM_VALUES_COUNT + 5);
+        int cellState = rand.nextInt(SchellingConfiguration.ROOM_VALUES_COUNT + 1);
 
         return switch (cellState) {
             case 0 ->
