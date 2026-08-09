@@ -8,6 +8,7 @@ import java.util.*;
 
 import game.Grid;
 import schelling.SchellingConfiguration.RoomValue;
+import static schelling.SchellingConfiguration.TOLERANCE_THRESHOLD;
 
 public class SchellingModel extends Game<RoomState> {
 
@@ -58,14 +59,12 @@ public class SchellingModel extends Game<RoomState> {
     @Override
     public RoomState cellNextState(Cell<RoomState> cell) {
         assert(!cell.getState().getRoomValue().equals(RoomValue.EMPTY));
-        long undesirableNeighborCount = this.getCellNeighbors(cell).stream().filter(neighbor -> {
-            RoomValue neighborType = neighbor.getState().getRoomValue();
-            RoomValue myType = cell.getState().getRoomValue();
+        RoomValue myType = cell.getState().getRoomValue();
+        long undesirableNeighborCount = this.getCellNeighbors(cell).stream()
+                .filter(maybeNeighbor -> !maybeNeighbor.getState().getRoomValue().equals(RoomValue.EMPTY))
+                .filter(neighbor -> !neighbor.getState().getRoomValue().equals(myType)).count();
 
-            return !neighborType.equals(RoomValue.EMPTY) &&  !neighborType.equals(myType);
-        }).count();
-
-        if (undesirableNeighborCount > SchellingConfiguration.threshold && !emptyRooms.isEmpty()) {
+        if (undesirableNeighborCount > TOLERANCE_THRESHOLD && !emptyRooms.isEmpty()) {
             return new RoomState(RoomValue.EMPTY);
         }
 
@@ -73,19 +72,25 @@ public class SchellingModel extends Game<RoomState> {
     }
 
     public void nextState(SchellingModel newState) {
-        List<Cell<RoomState>> busyRooms = collectBusyRooms();
-        for (Cell<RoomState> busyCell : busyRooms) {
+        for (Cell<RoomState> busyCell : collectBusyRooms()) {
             RoomState nextCellState = this.cellNextState(busyCell); // empty or the same
             if (nextCellState.getRoomValue().equals(RoomValue.EMPTY)) {
-                Cell<RoomState> newFamilyHouse = chooseEmptyRoom();
-                newState.grid.setCellState(newFamilyHouse.getX(), newFamilyHouse.getY(), busyCell.getState().clone());
-                busyCell.setState(nextCellState.clone());
-                this.emptyRooms.add(busyCell.clone());
+                Cell<RoomState> newBusyCell = moveBusyCellFamilyIntoEmptyRoom(busyCell);
+                newState.grid.setCellState(newBusyCell.getX(), newBusyCell.getY(), newBusyCell.getState());
             }
             newState.grid.setCellState(busyCell.getX(), busyCell.getY(), nextCellState.clone());
         }
 
         this.grid = newState.grid;
+    }
+
+    private Cell<RoomState> moveBusyCellFamilyIntoEmptyRoom(Cell<RoomState> busyCell) {
+        Cell<RoomState> newBusyCell = pollEmptyRoom();
+        Cell<RoomState> newEmptyRoom = new Cell<>(busyCell.getX(), busyCell.getY(), new RoomState(RoomValue.EMPTY));
+        newBusyCell.setState(busyCell.getState().clone());
+        this.emptyRooms.add(newEmptyRoom);
+
+        return newBusyCell;
     }
 
     private ArrayList<Cell<RoomState>> collectBusyRooms() {
@@ -99,11 +104,10 @@ public class SchellingModel extends Game<RoomState> {
                 }
             }
         }
-
         return busyRooms;
     }
 
-    private Cell<RoomState> chooseEmptyRoom() {
+    private Cell<RoomState> pollEmptyRoom() {
         Random random = new Random();
         int index = random.nextInt(this.emptyRooms.size());
         return this.emptyRooms.remove(index);
