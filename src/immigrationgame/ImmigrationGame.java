@@ -48,15 +48,13 @@ public class ImmigrationGame extends Game<ImmigrationState> {
     @Override
     public ImmigrationState cellNextState(Cell<ImmigrationState> cell) {
         List<Cell<ImmigrationState>> neighbors = this.getCellNeighbors(cell);
-        int higherStateNeighbors = 0;
         int cellStatus = cell.getState().getImmigrationState();
         int nextStatus = (cellStatus + 1) % stateNumber;
 
-        for (Cell<ImmigrationState> n : neighbors) {
-            if (n.getState().getImmigrationState() == nextStatus) {
-                higherStateNeighbors++;
-            }
-        }
+        long higherStateNeighbors = this.getCellNeighbors(cell)
+                .stream()
+                .filter(n -> n.getState().getImmigrationState() == nextStatus)
+                .count();
 
         if  (higherStateNeighbors >= 3) {
             return new ImmigrationState(nextStatus);
@@ -64,7 +62,6 @@ public class ImmigrationGame extends Game<ImmigrationState> {
             return new ImmigrationState(cellStatus);
         }
     }
-
 
 
     @Override

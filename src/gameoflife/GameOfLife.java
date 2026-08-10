@@ -86,14 +86,7 @@ public class GameOfLife extends Game<LifeState> {
 
     // Game function
     public LifeState cellNextState(Cell<LifeState> cell) {
-        List<Cell<LifeState>> neighbors = this.getCellNeighbors(cell);
-        int aliveNeighbors = 0;
-
-        for (Cell<LifeState> n : neighbors) {
-            if (isAlive(n)) {
-                aliveNeighbors++;
-            }
-        }
+        long aliveNeighbors = this.getCellNeighbors(cell).stream().filter(this::isAlive).count();
 
         if (isAlive(cell)) {
             if (aliveNeighbors == 2 || aliveNeighbors == 3) {
