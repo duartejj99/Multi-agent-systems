@@ -44,4 +44,5 @@ public class RoomState implements CellState, Cloneable {
     public RoomValue getRoomValue() {
         return state;
     }
+    public boolean isRoomEmpty() {return this.state == RoomValue.EMPTY;}
 }

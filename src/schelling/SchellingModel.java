@@ -5,6 +5,7 @@ import game.Game;
 
 import java.awt.Color;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import game.Grid;
 import schelling.SchellingConfiguration.RoomValue;
@@ -20,19 +21,14 @@ public class SchellingModel extends Game<RoomState> {
 
     public SchellingModel(int rows, int columns) {
         super(rows, columns);
-
         this.emptyRooms = new LinkedList<>();
         this.initialEmptyRooms = new LinkedList<>();
 
-        for (ArrayList<Cell<RoomState>> cell : this.grid.cells()) {
-            for (Cell<RoomState> c : cell) {
-                if (c.getState().getRoomValue().equals(RoomValue.EMPTY)) {
-                    emptyRooms.add(c.clone());
-                }
-            }
-        }
+        this.emptyRooms = this.grid.stream()
+                        .filter(cell -> cell.getState().isRoomEmpty())
+                        .map(Cell::clone)
+                        .collect(Collectors.toCollection(LinkedList::new));
         this.initialEmptyRooms = new LinkedList<>(emptyRooms);
-
     }
 
     public SchellingModel(SchellingModel model) {
@@ -58,11 +54,14 @@ public class SchellingModel extends Game<RoomState> {
 
     @Override
     public RoomState cellNextState(Cell<RoomState> cell) {
-        assert(!cell.getState().getRoomValue().equals(RoomValue.EMPTY));
+        assert(!cell.getState().isRoomEmpty());
         RoomValue myType = cell.getState().getRoomValue();
-        long undesirableNeighborCount = this.getCellNeighbors(cell).stream()
-                .filter(maybeNeighbor -> !maybeNeighbor.getState().getRoomValue().equals(RoomValue.EMPTY))
-                .filter(neighbor -> !neighbor.getState().getRoomValue().equals(myType)).count();
+        long undesirableNeighborCount =
+                        this.getCellNeighbors(cell)
+                        .stream()
+                        .filter(maybeNeighbor -> !maybeNeighbor.getState().isRoomEmpty())
+                        .filter(neighbor -> !neighbor.getState().getRoomValue().equals(myType))
+                        .count();
 
         if (undesirableNeighborCount > TOLERANCE_THRESHOLD && !emptyRooms.isEmpty()) {
             return new RoomState(RoomValue.EMPTY);
@@ -74,7 +73,7 @@ public class SchellingModel extends Game<RoomState> {
     public void nextState(SchellingModel newState) {
         for (Cell<RoomState> busyCell : collectBusyRooms()) {
             RoomState nextCellState = this.cellNextState(busyCell); // empty or the same
-            if (nextCellState.getRoomValue().equals(RoomValue.EMPTY)) {
+            if (nextCellState.isRoomEmpty()) {
                 Cell<RoomState> newBusyCell = moveBusyCellFamilyIntoEmptyRoom(busyCell);
                 newState.grid.setCellState(newBusyCell.getX(), newBusyCell.getY(), newBusyCell.getState());
             }
@@ -95,16 +94,11 @@ public class SchellingModel extends Game<RoomState> {
 
     private ArrayList<Cell<RoomState>> collectBusyRooms() {
         // TODO: This could be an iterator over all members of grid.
-        ArrayList<Cell<RoomState>> busyRooms = new ArrayList<>();
-        for  (int row = 0; row < getRows(); row++) {
-            for (int column = 0; column < getColumns(); column++) {
-                Cell<RoomState> cell = this.grid.getCell(row, column);
-                if (!cell.getState().getRoomValue().equals(RoomValue.EMPTY)) {
-                    busyRooms.add(cell);
-                }
-            }
-        }
-        return busyRooms;
+        return this.grid
+                .stream()
+                .filter(cell -> !cell.getState().isRoomEmpty())
+                .collect(Collectors.toCollection(ArrayList::new));
+
     }
 
     private Cell<RoomState> pollEmptyRoom() {
