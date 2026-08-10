@@ -1,8 +1,11 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-public class Grid<TState extends CellState> {
+public class Grid<TState extends CellState> implements Iterable<Cell<TState>> {
     private ArrayList<ArrayList<Cell<TState>>> cells;
 
     private final int rows;
@@ -13,7 +16,11 @@ public class Grid<TState extends CellState> {
         this.cols = cols;
         this.cells = new ArrayList<>(rows);
         for(int i = 0; i < rows; i++) {
-            cells.add( new ArrayList<>(cols));
+            ArrayList<Cell<TState>> row = new ArrayList<>(cols);
+            for (int j = 0; j < cols; j++) {
+                row.add(null);
+            }
+            cells.add(row);
         }
     }
 
@@ -38,6 +45,13 @@ public class Grid<TState extends CellState> {
         return  cells.get(row).get(column).getState();
     }
 
+    public void setCell(int row, int column, Cell<TState> cell) {
+        if (row < 0 || column < 0 || row >= rows || column >= cols) {
+            throw new IndexOutOfBoundsException("Invalid row or column");
+        }
+        cells.get(row).set(column, cell);
+    }
+
     public void addCell(int row, int column, Cell<TState> cell) {
         if (row < 0 || column < 0 || row >= rows || column >= cols) {
             throw new IndexOutOfBoundsException("Invalid row or column");
@@ -45,10 +59,16 @@ public class Grid<TState extends CellState> {
         cells.get(row).add(column, cell);
     }
 
+    /*
+        Return the number of rows on the grid
+     */
     public int rows() {
         return rows;
     }
 
+    /*
+        Return the number of columns on each row.
+     */
     public int columns() {
         return cols;
     }
@@ -79,5 +99,14 @@ public class Grid<TState extends CellState> {
     // Not good.
     public ArrayList<ArrayList<Cell<TState>>> cells() {
         return cells;
+    }
+
+    @Override
+    public Iterator<Cell<TState>> iterator() {
+        return new GridIterator<>(this);
+    }
+
+    public Stream<Cell<TState>> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 }

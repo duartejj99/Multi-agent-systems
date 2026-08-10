@@ -50,8 +50,8 @@ public abstract class Game<TState extends CellState>{
         for (int row = 0; row < rows; row++) {
             for (int column = 0; column < cols; column++) {
                 Cell<TState> cell = new Cell<TState>(row, column, newState());
-                grid.addCell(row, column, cell);
-                initialGrid.addCell(row, column, cell.clone());
+                grid.setCell(row, column, cell);
+                initialGrid.setCell(row, column, cell.clone());
             }
         }
     }
@@ -129,6 +129,9 @@ public abstract class Game<TState extends CellState>{
     }
 
 
+    /*
+        Draws the game on the GUI.
+     */
     public void draw(GUISimulator gui) {
         gui.reset();
         int marcoSizeX = getRows() * CELL_SIZE;
