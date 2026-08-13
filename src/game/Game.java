@@ -80,47 +80,7 @@ public abstract class Game<TState extends CellState>{
 
     // Future Grid function
     public List<Cell<TState>> getCellNeighbors(Cell<TState> cell) {
-        int[] rows = new int[3];
-        int[] columns = new int[3];
-
-        rows[0] = cell.getX() - 1;
-        rows[1] = cell.getX();
-        rows[2] = cell.getX() + 1;
-
-        columns[0] = cell.getY() - 1;
-        columns[1] = cell.getY();
-        columns[2] = cell.getY() + 1;
-
-        if (cell.getX() == getRows() - 1) {
-            rows[2] = 0;
-        }
-
-        if (cell.getX() == 0) {
-            rows[0] = this.grid.rows() - 1;
-        }
-
-        if (cell.getY() == this.grid.columns() - 1) {
-            columns[2] = 0;
-        }
-
-        if (cell.getY() == 0) {
-            columns[0] =  this.grid.columns() - 1;
-        }
-
-        List<Cell<TState>> neighbors = new ArrayList<Cell<TState>>(8);
-
-        for (int x : rows) {
-            for (int y : columns) {
-                if (cell.getX() == x && cell.getY() == y) {
-                    continue;
-                }
-
-                Cell<TState> neighbor = this.getCell(x, y);
-                neighbors.add(neighbor);
-            }
-        }
-
-        return neighbors;
+        return this.grid.getCellNeighbors(cell);
     }
 
     /// Gets the Cell of the given coordinates.

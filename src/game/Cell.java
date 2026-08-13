@@ -1,6 +1,9 @@
 package game;
 
-public class Cell<TState extends CellState> implements Cloneable {
+import MultiAgentSystem.Agent;
+import gui.GraphicalElement;
+
+public class Cell<TState extends CellState> extends Agent implements Cloneable {
     private TState state;
     private final int x;
 
@@ -46,5 +49,10 @@ public class Cell<TState extends CellState> implements Cloneable {
             return false;
         }
         return this.state.equals(otherCell.state)  && this.getX() == otherCell.getX() && this.getY() == otherCell.getY();
+    }
+
+    @Override
+    public GraphicalElement getGraphicalElement() {
+        return null;
     }
 }

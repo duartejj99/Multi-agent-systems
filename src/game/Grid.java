@@ -2,6 +2,7 @@ package game;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -93,6 +94,50 @@ public class Grid<TState extends CellState> implements Iterable<Cell<TState>> {
         this.cells.get(row).get(column).setState(cellState);
     }
 
+    // Future Grid function
+    public List<Cell<TState>> getCellNeighbors(Cell<TState> cell) {
+        int[] rows = new int[3];
+        int[] columns = new int[3];
+
+        rows[0] = cell.getX() - 1;
+        rows[1] = cell.getX();
+        rows[2] = cell.getX() + 1;
+
+        columns[0] = cell.getY() - 1;
+        columns[1] = cell.getY();
+        columns[2] = cell.getY() + 1;
+
+        if (cell.getX() == this.rows() - 1) {
+            rows[2] = 0;
+        }
+
+        if (cell.getX() == 0) {
+            rows[0] = this.rows() - 1;
+        }
+
+        if (cell.getY() == this.columns() - 1) {
+            columns[2] = 0;
+        }
+
+        if (cell.getY() == 0) {
+            columns[0] =  this.columns() - 1;
+        }
+
+        List<Cell<TState>> neighbors = new ArrayList<Cell<TState>>(8);
+
+        for (int x : rows) {
+            for (int y : columns) {
+                if (cell.getX() == x && cell.getY() == y) {
+                    continue;
+                }
+
+                Cell<TState> neighbor = this.getCell(x, y);
+                neighbors.add(neighbor);
+            }
+        }
+
+        return neighbors;
+    }
 
     //TODO: This should be deleted.
     // This gives control to over who use it to modify the cells.
