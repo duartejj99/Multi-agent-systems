@@ -1,12 +1,16 @@
 package game;
 
+import MultiAgentSystem.Agent;
+import MultiAgentSystem.AutonomousAgents;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public class Grid<TState extends CellState> implements Iterable<Cell<TState>> {
+public class Grid<TState extends CellState> implements AutonomousAgents {
     private ArrayList<ArrayList<Cell<TState>>> cells;
 
     private final int rows;
@@ -94,7 +98,6 @@ public class Grid<TState extends CellState> implements Iterable<Cell<TState>> {
         this.cells.get(row).get(column).setState(cellState);
     }
 
-    // Future Grid function
     public List<Cell<TState>> getCellNeighbors(Cell<TState> cell) {
         int[] rows = new int[3];
         int[] columns = new int[3];
@@ -139,19 +142,21 @@ public class Grid<TState extends CellState> implements Iterable<Cell<TState>> {
         return neighbors;
     }
 
-    //TODO: This should be deleted.
-    // This gives control to over who use it to modify the cells.
-    // Not good.
-    public ArrayList<ArrayList<Cell<TState>>> cells() {
-        return cells;
-    }
-
-    @Override
-    public Iterator<Cell<TState>> iterator() {
+    public Iterator<Cell<TState>> cells() {
         return new GridIterator<>(this);
     }
 
+    @Override
+    public Iterator<Agent> iterator() {
+        return new GridAgentIterator<>(this);
+    }
+
     public Stream<Cell<TState>> stream() {
-        return StreamSupport.stream(spliterator(), false);
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(this.cells(), 0), false);
+    }
+
+    @Override
+    public AutonomousAgents clone() {
+        return new Grid<>(this);
     }
 }

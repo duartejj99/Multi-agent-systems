@@ -6,6 +6,7 @@ import game.Game;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GameOfLife extends Game<LifeState> {
     // Randomly generated
@@ -111,15 +112,20 @@ public class GameOfLife extends Game<LifeState> {
     @Override
     public String toString() {
         StringBuilder game = new StringBuilder();
-        for (ArrayList<Cell<LifeState>> row : grid.cells()) {
-            for (Cell<LifeState> cell : row) {
-                if (isAlive(cell)) {
-                     game.append("[x]");
-                } else {
-                    game.append("[ ]");
-                }
+        int columnNumber = 0;
+        for (Cell<LifeState> cell : grid.stream().collect(Collectors.toCollection(ArrayList::new))) {
+
+            if (isAlive(cell)) {
+                 game.append("[x]");
+            } else {
+                game.append("[ ]");
             }
-            game.append("\n");
+
+            columnNumber++;
+            if (columnNumber == grid.columns()) {
+                game.append("\n");
+                columnNumber = 0;
+            }
         }
 
         return game.toString();

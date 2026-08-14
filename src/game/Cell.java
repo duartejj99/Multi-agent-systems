@@ -34,7 +34,7 @@ public class Cell<TState extends CellState> extends Agent implements Cloneable {
 
     @Override
     public Cell<TState> clone() {
-        return new Cell<TState>(this.x, this.y, this.state);
+        return new Cell<>(this.x, this.y, this.state);
     }
 
 
