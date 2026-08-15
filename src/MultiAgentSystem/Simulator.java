@@ -1,11 +1,9 @@
 package MultiAgentSystem;
 
-import game.CellState;
-import game.Game;
 import gui.GUISimulator;
 import gui.Simulable;
 
-public class Simulator<TState extends CellState> implements Simulable {
+public class Simulator implements Simulable {
     private final GUISimulator gui;
     private final MultiAgentSystem multiAgentSystem;
 

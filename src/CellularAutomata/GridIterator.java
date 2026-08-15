@@ -1,4 +1,4 @@
-package game;
+package CellularAutomata;
 
 import java.util.Iterator;
 

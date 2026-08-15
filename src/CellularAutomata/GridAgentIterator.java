@@ -1,14 +1,14 @@
-package game;
+package CellularAutomata;
 
 import MultiAgentSystem.Agent;
 
 import java.util.Iterator;
 
 public class GridAgentIterator<TState extends CellState> implements Iterator<Agent> {
-    private final Iterator<Agent> gridIterator;
+    private final Iterator<Cell<TState>> gridIterator;
 
-    public GridAgentIterator(Grid<TState> cells) {
-        this.gridIterator = cells.iterator();
+    public GridAgentIterator(Grid<TState> grid) {
+        this.gridIterator = grid.cells();
     }
     @Override
     public boolean hasNext() {

@@ -1,17 +1,16 @@
 package schelling;
 
-import game.Cell;
-import game.Game;
+import CellularAutomata.CellularAutomata;
+import CellularAutomata.Cell;
 
-import java.awt.Color;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import game.Grid;
+import CellularAutomata.Grid;
 import schelling.SchellingConfiguration.RoomValue;
 import static schelling.SchellingConfiguration.TOLERANCE_THRESHOLD;
 
-public class SchellingModel extends Game<RoomState> {
+public class SchellingModel extends CellularAutomata<RoomState> {
 
     // TODO: Instead of a List, I would like to randomize the empty room that a family choose to get
     // In this case a hashmap could serve better for improving access time
@@ -53,6 +52,27 @@ public class SchellingModel extends Game<RoomState> {
     }
 
     @Override
+    public CellularAutomata<RoomState> newCellularAutomata() {
+        return new SchellingModel(this);
+    }
+
+    /*
+        "Overrides" the nextState method used on the "Game" base class
+    */
+    public void nextState(SchellingModel newState) {
+        for (Cell<RoomState> busyCell : collectBusyRooms()) {
+            RoomState nextCellState = this.cellNextState(busyCell); // empty or the same
+            if (nextCellState.isRoomEmpty()) {
+                Cell<RoomState> newBusyCell = moveBusyCellFamilyIntoEmptyRoom(busyCell);
+                newState.grid.setCellState(newBusyCell.getX(), newBusyCell.getY(), newBusyCell.getState());
+            }
+            newState.grid.setCellState(busyCell.getX(), busyCell.getY(), nextCellState.clone());
+        }
+
+        this.grid = newState.grid;
+    }
+
+    @Override
     public RoomState cellNextState(Cell<RoomState> cell) {
         assert(!cell.getState().isRoomEmpty());
         RoomValue myType = cell.getState().getRoomValue();
@@ -70,22 +90,9 @@ public class SchellingModel extends Game<RoomState> {
         return new RoomState(cell.getState().getRoomValue());
     }
 
-    public void nextState(SchellingModel newState) {
-        for (Cell<RoomState> busyCell : collectBusyRooms()) {
-            RoomState nextCellState = this.cellNextState(busyCell); // empty or the same
-            if (nextCellState.isRoomEmpty()) {
-                Cell<RoomState> newBusyCell = moveBusyCellFamilyIntoEmptyRoom(busyCell);
-                newState.grid.setCellState(newBusyCell.getX(), newBusyCell.getY(), newBusyCell.getState());
-            }
-            newState.grid.setCellState(busyCell.getX(), busyCell.getY(), nextCellState.clone());
-        }
-
-        this.grid = newState.grid;
-    }
-
     private Cell<RoomState> moveBusyCellFamilyIntoEmptyRoom(Cell<RoomState> busyCell) {
         Cell<RoomState> newBusyCell = pollEmptyRoom();
-        Cell<RoomState> newEmptyRoom = new Cell<>(busyCell.getX(), busyCell.getY(), new RoomState(RoomValue.EMPTY));
+        Cell<RoomState> newEmptyRoom = new Cell<RoomState>(busyCell.getX(), busyCell.getY(), new RoomState(RoomValue.EMPTY));
         newBusyCell.setState(busyCell.getState().clone());
         this.emptyRooms.add(newEmptyRoom);
 
@@ -108,26 +115,8 @@ public class SchellingModel extends Game<RoomState> {
     }
 
     @Override
-    public Color getCellColor(int x, int y) {
-        Cell<RoomState> cell = this.grid.getCell(x,y);
-        return switch (cell.getState().getRoomValue()) {
-            case BLACK ->
-                Color.black;
-            case RED ->
-                Color.red;
-            case ORANGE ->
-                Color.ORANGE;
-            case YELLOW ->
-                Color.YELLOW;
-            case PINK ->
-                Color.PINK;
-            default -> Color.GRAY;
-        };
-    }
-
-    @Override
     public void restart() {
-        this.grid = new Grid<>(this.initialGrid);
+        this.grid = new Grid<RoomState>(this.initialGrid);
         this.emptyRooms = new LinkedList<>(this.initialEmptyRooms);
     }
 }

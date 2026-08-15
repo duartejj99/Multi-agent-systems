@@ -7,16 +7,17 @@ import java.awt.*;
 
 public abstract class MultiAgentSystem{
 
-    public AutonomousAgents agents;
-    public AutonomousAgents initialAgents;
+    public abstract AutonomousAgents agents();
+    public abstract AutonomousAgents initialAgents();
     protected int windowSizeX;
     protected int windowSizeY;
 
     public abstract void nextState();
 
-    public void restart(){
-        this.agents = initialAgents.clone();
-    };
+    /**
+     * Restart the MultiAgentSystem to its initial state.
+     */
+    public abstract void restart();
 
     /*
         Draws the game on the GUI.
@@ -37,7 +38,7 @@ public abstract class MultiAgentSystem{
         );
         gui.addGraphicalElement(marco);
 
-        for (Agent a : agents) {
+        for (Agent a : agents()) {
             gui.addGraphicalElement(a.getGraphicalElement());
         }
     }

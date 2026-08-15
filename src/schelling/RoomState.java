@@ -1,6 +1,8 @@
 package schelling;
 
-import game.CellState;
+import CellularAutomata.CellState;
+
+import java.awt.*;
 import java.util.Random;
 import schelling.SchellingConfiguration.RoomValue;
 
@@ -45,4 +47,21 @@ public class RoomState implements CellState, Cloneable {
         return state;
     }
     public boolean isRoomEmpty() {return this.state == RoomValue.EMPTY;}
+
+    @Override
+    public Color toColor() {
+        return switch (this.getRoomValue()) {
+            case BLACK ->
+                    Color.BLACK;
+            case RED ->
+                    Color.RED;
+            case ORANGE ->
+                    Color.ORANGE;
+            case YELLOW ->
+                    Color.YELLOW;
+            case PINK ->
+                    Color.PINK;
+            default -> Color.GRAY;
+        };
+    }
 }

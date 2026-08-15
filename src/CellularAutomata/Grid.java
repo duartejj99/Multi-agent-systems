@@ -1,4 +1,4 @@
-package game;
+package CellularAutomata;
 
 import MultiAgentSystem.Agent;
 import MultiAgentSystem.AutonomousAgents;
@@ -156,7 +156,7 @@ public class Grid<TState extends CellState> implements AutonomousAgents {
     }
 
     @Override
-    public AutonomousAgents clone() {
+    public Grid<TState> clone() {
         return new Grid<>(this);
     }
 }

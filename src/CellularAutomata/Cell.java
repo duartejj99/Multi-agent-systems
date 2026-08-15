@@ -1,7 +1,12 @@
-package game;
+package CellularAutomata;
 
 import MultiAgentSystem.Agent;
 import gui.GraphicalElement;
+import gui.Rectangle;
+import java.awt.*;
+
+import static CellularAutomata.CellularAutomata.CELL_OFFSET;
+import static CellularAutomata.CellularAutomata.CELL_SIZE;
 
 public class Cell<TState extends CellState> extends Agent implements Cloneable {
     private TState state;
@@ -34,7 +39,7 @@ public class Cell<TState extends CellState> extends Agent implements Cloneable {
 
     @Override
     public Cell<TState> clone() {
-        return new Cell<>(this.x, this.y, this.state);
+        return new Cell<TState>(this.x, this.y, this.state);
     }
 
 
@@ -53,6 +58,12 @@ public class Cell<TState extends CellState> extends Agent implements Cloneable {
 
     @Override
     public GraphicalElement getGraphicalElement() {
-        return null;
+        return new Rectangle(
+                y * CELL_SIZE + CELL_OFFSET,    // row
+                x * CELL_SIZE + CELL_OFFSET,       // column
+                Color.BLUE,
+                this.state.toColor(),
+                CELL_SIZE
+        );
     }
 }

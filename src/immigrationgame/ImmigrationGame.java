@@ -1,19 +1,15 @@
 package immigrationgame;
 
-import game.Cell;
-import game.Game;
-import gameoflife.GameOfLife;
-import gameoflife.LifeState;
+import CellularAutomata.CellularAutomata;
+import CellularAutomata.Cell;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-import static java.awt.Color.*;
+import static immigrationgame.ImmigrationGameConfiguration.stateNumber;
 
-public class ImmigrationGame extends Game<ImmigrationState> {
+public class ImmigrationGame extends CellularAutomata<ImmigrationState> {
 
-    private static final int stateNumber = 4;
     public ImmigrationGame(int rows, int cols) {
         super(rows, cols);
     }
@@ -36,13 +32,6 @@ public class ImmigrationGame extends Game<ImmigrationState> {
         return new ImmigrationState(random.nextInt(stateNumber));
 
     }
-
-    @Override
-    public void nextState() {
-        ImmigrationGame newState = new ImmigrationGame(getRows(), getColumns());
-        this.nextState(newState);
-    }
-
     // cell pass from state k to k+1
     // if it has 3 or more neighbors on the k+1 state
     @Override
@@ -63,19 +52,8 @@ public class ImmigrationGame extends Game<ImmigrationState> {
         }
     }
 
-
     @Override
-    public Color getCellColor(int x, int y) throws IllegalStateException {
-        Cell<ImmigrationState> cell = getCell(x, y);
-
-        return switch (cell.getState().getImmigrationState()) {
-            case 0 -> YELLOW;
-            case 1 -> GREEN;
-            case 2 -> RED;
-            case 3 -> BLACK;
-            default ->
-                // This means my program is fault, not the user. This is not meant to be caught
-                throw new IllegalStateException("Unexpected value found on Immigration game cell: " + cell.getState().getImmigrationState());
-        };
+    public CellularAutomata<ImmigrationState> newCellularAutomata() {
+        return new ImmigrationGame(this.getRows(), this.getColumns());
     }
 }

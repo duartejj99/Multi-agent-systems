@@ -1,7 +1,8 @@
 package gameoflife;
 
-import game.CellState;
+import CellularAutomata.CellState;
 
+import java.awt.*;
 import java.util.Random;
 
 public class LifeState implements CellState {
@@ -28,5 +29,13 @@ public class LifeState implements CellState {
         }
 
         return this.state == other.state;
+    }
+
+    public Color toColor() {
+        if (this.isAlive()) {
+            return Color.BLUE;
+        } else {
+            return Color.WHITE;
+        }
     }
 }

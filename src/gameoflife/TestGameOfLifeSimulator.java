@@ -2,7 +2,7 @@ package gameoflife;
 
 import java.awt.Color;
 
-import game.Simulator;
+import MultiAgentSystem.Simulator;
 import gui.GUISimulator;
 
 public class TestGameOfLifeSimulator {
@@ -10,8 +10,8 @@ public class TestGameOfLifeSimulator {
         GUISimulator gui = new GUISimulator(0, 0, Color.BLACK);
 
         GameOfLife game = new GameOfLife();
-        Simulator<LifeState> simulator = new Simulator<>(gui, game);
-        gui.setSize(game.getDisplayWidth(), game.getDisplayHeight() + 70);
+        Simulator simulator = new Simulator(gui, game);
+        gui.setSize(game.getWindowSizeX(), game.getWindowSizeY() + 70);
         simulator.draw();
 
 

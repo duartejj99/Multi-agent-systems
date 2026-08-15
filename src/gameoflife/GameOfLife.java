@@ -1,14 +1,12 @@
 package gameoflife;
 
-import game.Cell;
-import game.Game;
+import CellularAutomata.CellularAutomata;
+import CellularAutomata.Cell;
 
-import java.awt.Color;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
-public class GameOfLife extends Game<LifeState> {
+public class GameOfLife extends CellularAutomata<LifeState> {
     // Randomly generated
 
     // User sized game
@@ -62,32 +60,16 @@ public class GameOfLife extends Game<LifeState> {
         }
     }
 
-    // BUGGY, doesn't work, it is a shallow copy, not deep
-    public GameOfLife(GameOfLife initialState) {
-        super(initialState);
-    }
+
 
     /// Calculates next state of the game of life.
     /// The new state calculated on the "newGrid" based on the
     /// actual state maintained on this.grid
-    @Override
-    public void nextState() {
-        GameOfLife newState = new GameOfLife(getRows(), getColumns());
-        this.nextState(newState);
-    }
 
-    @Override
-    public Color getCellColor(int x, int y) {
-        if (isAlive(getCell(x,y))) {
-            return Color.BLUE;
-        } else {
-            return Color.WHITE;
-        }
-    }
 
     // Game function
     public LifeState cellNextState(Cell<LifeState> cell) {
-        long aliveNeighbors = this.getCellNeighbors(cell).stream().filter(this::isAlive).count();
+        long aliveNeighbors = this.getCellNeighbors(cell).stream().filter(GameOfLife::isAlive).count();
 
         if (isAlive(cell)) {
             if (aliveNeighbors == 2 || aliveNeighbors == 3) {
@@ -104,7 +86,12 @@ public class GameOfLife extends Game<LifeState> {
         }
     }
 
-    private boolean isAlive(Cell<LifeState> n) {
+    @Override
+    public CellularAutomata<LifeState> newCellularAutomata() {
+        return new GameOfLife(this.getRows(), this.getColumns());
+    }
+
+    private static boolean isAlive(Cell<LifeState> n) {
         return n.getState().isAlive();
     }
 
